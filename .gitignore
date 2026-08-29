@@ -1,0 +1,57 @@
+# Dependency directories
+node_modules/
+**/node_modules/
+
+# Next.js build output and cache
+.next/
+**/ .next/
+
+# Python virtual environment and cache
+venv/
+**/venv/
+.venv/
+**/ .venv/
+__pycache__/
+**/__pycache__/
+*.py[cod]
+
+# Build outputs
+dist/
+**/dist/
+build/
+**/build/
+
+# Local environment files (sensitive credentials)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+**/.env
+**/.env.local
+
+# IDE metadata
+.idea/
+**/.idea/
+
+# Screenshots & Reports source
+*.png
+**/*.png
+*.pages
+**/*.pages
+
+# Firebase configuration caches
+.firebase/
+**/.firebase/
+
+# Local backups
+**/backups/
+
+# Next.js and typescript build artifacts
+**/tsconfig.tsbuildinfo
+**/out/
+
+# OS metadata files
+.DS_Store
+**/.DS_Store
+Thumbs.db
