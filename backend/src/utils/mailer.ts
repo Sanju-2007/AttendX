@@ -1,15 +1,33 @@
 import nodemailer from 'nodemailer';
 
-// Configure transporter with environment variables or fallback
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || 'smtp.gmail.com',
-  port: parseInt(process.env.SMTP_PORT || '587'),
-  secure: process.env.SMTP_PORT === '465',
-  auth: {
-    user: process.env.SMTP_USER || '',
-    pass: process.env.SMTP_PASS || '',
-  },
-});
+// Configure transporter with robust Gmail / SMTP support
+const createTransporter = () => {
+  const user = process.env.SMTP_USER || '';
+  const pass = (process.env.SMTP_PASS || '').replace(/\s+/g, ''); // strip any spaces in Google App Password
+
+  if (user.includes('@gmail.com') || (process.env.SMTP_HOST && process.env.SMTP_HOST.includes('gmail'))) {
+    return nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user,
+        pass,
+      },
+    });
+  }
+
+  return nodemailer.createTransport({
+    host: process.env.SMTP_HOST || 'smtp.gmail.com',
+    port: parseInt(process.env.SMTP_PORT || '465'),
+    secure: process.env.SMTP_PORT === '465' || !process.env.SMTP_PORT,
+    auth: {
+      user,
+      pass,
+    },
+  });
+};
+
+const transporter = createTransporter();
+
 
 export const sendOtpEmail = async (email: string, otp: string, purpose: 'REGISTRATION' | 'PASSWORD_RESET' | 'LOGIN_2FA' = 'REGISTRATION') => {
   const titles = {
