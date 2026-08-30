@@ -20,40 +20,67 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Mac Water Theme / Semi-Transparent Window Panes */
-.mac-window, .water-pane, .glass-dark {
-  background: rgba(255, 255, 255, 0.78);
+/* iOS / macOS Liquid Glass Window Panes & Cards (Matching iOS Glass Reference) */
+.mac-window, .water-pane, .glass-dark, .glass-pane {
+  background: linear-gradient(
+    135deg, 
+    rgba(255, 255, 255, 0.82) 0%, 
+    rgba(255, 255, 255, 0.65) 50%, 
+    rgba(255, 255, 255, 0.55) 100%
+  );
+  backdrop-filter: blur(36px) saturate(210%);
+  -webkit-backdrop-filter: blur(36px) saturate(210%);
+  border: 1.5px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 
+    0 20px 45px -10px rgba(0, 0, 0, 0.07),
+    0 2px 8px 0 rgba(0, 0, 0, 0.03),
+    inset 0 2px 3px 0 rgba(255, 255, 255, 1),
+    inset 0 -2px 3px 0 rgba(0, 0, 0, 0.03);
+  border-radius: 1.75rem;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mac-window-hover:hover, .water-pane-hover:hover, .glass-pane:hover {
+  border-color: rgba(255, 255, 255, 1);
+  box-shadow: 
+    0 28px 55px -12px rgba(0, 0, 0, 0.1),
+    0 0 1px 1px rgba(0, 113, 227, 0.2),
+    inset 0 2px 3px 0 rgba(255, 255, 255, 1);
+  transform: translateY(-2px);
+}
+
+.mac-card, .water-card, .glass, .glass-bubble {
+  background: linear-gradient(
+    135deg, 
+    rgba(255, 255, 255, 0.8) 0%, 
+    rgba(255, 255, 255, 0.55) 50%, 
+    rgba(255, 255, 255, 0.45) 100%
+  );
   backdrop-filter: blur(28px) saturate(190%);
   -webkit-backdrop-filter: blur(28px) saturate(190%);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-top: 1px solid rgba(255, 255, 255, 0.95);
+  border: 1.5px solid rgba(255, 255, 255, 0.95);
   box-shadow: 
-    0 20px 45px -15px rgba(0, 0, 0, 0.08),
-    0 0 1px 1px rgba(0, 0, 0, 0.04),
-    inset 0 1px 2px 0 rgba(255, 255, 255, 1);
+    0 12px 28px -6px rgba(0, 0, 0, 0.05),
+    0 2px 6px rgba(0, 0, 0, 0.02),
+    inset 0 2px 2px 0 rgba(255, 255, 255, 1),
+    inset 0 -1.5px 2px 0 rgba(0, 0, 0, 0.02);
   border-radius: 1.5rem;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.mac-window-hover:hover, .water-pane-hover:hover {
-  border-color: rgba(0, 113, 227, 0.25);
-  box-shadow: 
-    0 25px 50px -12px rgba(0, 0, 0, 0.12),
-    0 0 1px 1px rgba(0, 113, 227, 0.15),
-    inset 0 1px 2px 0 rgba(255, 255, 255, 1);
-  transform: translateY(-3px);
+/* Glass Inputs */
+.glass-input {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #000000;
+  border-radius: 0.75rem;
+  transition: all 0.2s ease;
 }
 
-.mac-card, .water-card, .glass {
-  background: rgba(255, 255, 255, 0.65);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  border-top: 1px solid rgba(255, 255, 255, 0.9);
-  box-shadow: 
-    0 10px 25px -5px rgba(0, 0, 0, 0.04),
-    inset 0 1px 1px 0 rgba(255, 255, 255, 0.9);
-  border-radius: 1.25rem;
+.glass-input:focus {
+  background: #FFFFFF;
+  border-color: #000000;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.08);
+  outline: none;
 }
 
 /* High Black Button */
@@ -69,6 +96,20 @@ body {
   background: #1D1D1F;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.22);
   transform: translateY(-1px);
+}
+
+/* Subtle Secondary Glass Button */
+.btn-glass-secondary {
+  background: rgba(0, 0, 0, 0.04);
+  color: #000000;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(12px);
+  transition: all 0.2s ease;
+}
+
+.btn-glass-secondary:hover {
+  background: rgba(0, 0, 0, 0.08);
+  color: #000000;
 }
 
 /* Mac Window Controls (Red, Yellow, Green Dots) */
@@ -105,3 +146,4 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 0, 0, 0.3);
 }
+

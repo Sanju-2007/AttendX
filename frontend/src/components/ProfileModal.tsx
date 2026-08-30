@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { User, Mail, Lock, LogOut, X, Edit2, ShieldAlert, CheckCircle, ScanFace } from "lucide-react";
+import { User, LogOut, X, Edit2, ScanFace } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { getApiUrl } from "../lib/api";
 import CameraCapture from "./CameraCapture";
@@ -154,239 +154,155 @@ export default function ProfileModal({ onProfileUpdate }: ProfileModalProps) {
     return `${userData.firstName?.[0] || ""}${userData.lastName?.[0] || ""}`.toUpperCase() || userData.email?.[0]?.toUpperCase() || "?";
   };
 
-  const getRoleColor = (role: string) => {
-    switch (role) {
-      case "ADMIN": return "bg-blue-500/10 text-blue-400 border-blue-500/20";
-      case "TEACHER": return "bg-purple-500/10 text-purple-400 border-purple-500/20";
-      case "STUDENT": return "bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
-      default: return "bg-gray-500/10 text-gray-400 border-gray-500/20";
-    }
-  };
-
   return (
     <>
       {/* Trigger Button - Header Avatar */}
       <button 
         onClick={() => setIsOpen(true)}
-        className="w-10 h-10 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 flex items-center justify-center font-bold text-white shadow-md border border-white/10 hover:scale-105 transition-transform overflow-hidden"
+        className="w-10 h-10 rounded-2xl bg-black hover:bg-neutral-900 flex items-center justify-center font-bold text-white shadow-sm hover:scale-105 transition-transform overflow-hidden"
       >
         {userData?.profilePic ? (
           <img src={userData.profilePic} alt="Avatar" className="w-full h-full object-cover" />
         ) : (
-          <User size={18} />
+          <span className="text-xs">{getInitials()}</span>
         )}
       </button>
 
       {/* Modal Backdrop */}
       <AnimatePresence>
         {isOpen && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4"
-          >
-            {/* Modal Box */}
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-md p-4">
             <motion.div 
-              initial={{ scale: 0.95, y: 15 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.95, y: 15 }}
-              className="w-full max-w-md glass-dark p-8 rounded-3xl border border-white/10 shadow-2xl relative"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="w-full max-w-md mac-window p-7 rounded-3xl relative overflow-hidden text-black"
             >
-              {/* Close Button */}
-              <button 
-                onClick={() => setIsOpen(false)}
-                className="absolute top-4 right-4 text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 w-8 h-8 rounded-full flex items-center justify-center transition"
-              >
-                <X size={18} />
-              </button>
-
-              {loading ? (
-                <div className="flex flex-col items-center justify-center py-10">
-                  <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-                  <p className="text-gray-400 text-sm">Loading details...</p>
+              {/* Header with dots */}
+              <div className="flex items-center justify-between pb-4 border-b border-black/[0.06] mb-5">
+                <div className="mac-dots">
+                  <span className="mac-dot mac-dot-close" onClick={() => setIsOpen(false)} />
+                  <span className="mac-dot mac-dot-min" />
+                  <span className="mac-dot mac-dot-max" />
                 </div>
-              ) : (
-                <div className="space-y-6">
-                  {/* Header/Avatar area */}
-                  <div className="flex flex-col items-center text-center">
-                    {userData?.profilePic ? (
-                      <img 
-                        src={userData.profilePic} 
-                        alt="Profile" 
-                        className="w-20 h-20 rounded-full object-cover border border-emerald-500/30 mb-3 shadow-inner"
+                <span className="text-[10px] font-mono tracking-widest text-neutral-400 uppercase">User Account</span>
+                <button 
+                  onClick={() => setIsOpen(false)}
+                  className="text-neutral-400 hover:text-black transition"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
+              {/* User Avatar + Name */}
+              <div className="flex flex-col items-center text-center pb-5 mb-5 border-b border-black/[0.06]">
+                <div className="w-16 h-16 rounded-2xl bg-black flex items-center justify-center font-bold text-xl text-white mb-3 shadow-sm">
+                  {getInitials()}
+                </div>
+                <h3 className="text-lg font-bold text-black">{userData?.firstName} {userData?.lastName}</h3>
+                <p className="text-xs text-neutral-500 font-mono mt-0.5">{userData?.email}</p>
+                <span className="text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border mt-2.5 bg-black/[0.04] text-black border-black/10">
+                  {userData?.role}
+                </span>
+              </div>
+
+              {error && (
+                <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-xs">
+                  {error}
+                </div>
+              )}
+              {success && (
+                <div className="mb-4 p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-600 text-xs">
+                  {success}
+                </div>
+              )}
+
+              {/* Form or Info */}
+              {isEditing ? (
+                <form onSubmit={handleUpdate} className="space-y-3.5">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-bold text-neutral-700 uppercase tracking-wider mb-1">First Name</label>
+                      <input 
+                        type="text" required value={firstName} onChange={e => setFirstName(e.target.value)}
+                        className="w-full glass-input py-2 px-3 text-sm text-black"
                       />
-                    ) : (
-                      <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-emerald-500/20 to-teal-500/20 border border-emerald-500/30 flex items-center justify-center text-3xl font-extrabold text-emerald-400 mb-3 shadow-inner">
-                        {getInitials()}
-                      </div>
-                    )}
-                    <h3 className="text-2xl font-bold text-white">
-                      {userData?.firstName} {userData?.lastName}
-                    </h3>
-                    <p className="text-sm text-gray-400 mb-2">{userData?.email}</p>
-                    <span className={`text-[10px] uppercase font-bold tracking-wider px-3 py-1 rounded-full border ${getRoleColor(userData?.role)}`}>
-                      {userData?.role}
-                    </span>
-                    {(userData?.role === "STUDENT" || userData?.role === "TEACHER") && (
-                      <button
-                        onClick={() => setShowCamera(true)}
-                        className="mt-3 text-xs bg-white/5 hover:bg-white/10 text-emerald-400 hover:text-emerald-300 font-bold py-1.5 px-3 rounded-lg border border-white/10 hover:border-emerald-500/30 transition flex items-center gap-1.5"
-                      >
-                        <ScanFace size={14} />
-                        Update Face Photo
-                      </button>
-                    )}
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-neutral-700 uppercase tracking-wider mb-1">Last Name</label>
+                      <input 
+                        type="text" required value={lastName} onChange={e => setLastName(e.target.value)}
+                        className="w-full glass-input py-2 px-3 text-sm text-black"
+                      />
+                    </div>
                   </div>
 
-                  {/* Profile Edit or Info Screen */}
-                  {!isEditing ? (
-                    <div className="space-y-4">
-                      {/* Role specific info */}
-                      {userData?.role === "STUDENT" && userData?.studentProfile && (
-                        <div className="bg-black/30 p-4 rounded-2xl border border-white/5 space-y-2.5 text-sm text-gray-300">
-                          <div className="flex justify-between">
-                            <span className="text-gray-400 text-xs">Roll Number</span>
-                            <span className="font-mono text-white">{userData.studentProfile.rollNumber}</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-400 text-xs">Year / Section</span>
-                            <span className="text-white">
-                              Year {userData.studentProfile.year} - {userData.studentProfile.section?.name || "Not Enrolled"}
-                            </span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-400 text-xs">Department</span>
-                            <span className="text-white">{userData.studentProfile.department?.name || "N/A"}</span>
-                          </div>
-                          <div className="flex justify-between items-center pt-1.5 border-t border-white/5">
-                            <span className="text-gray-400 text-xs">Class Change Status</span>
-                            {userData.studentProfile.allowSectionChange ? (
-                              <span className="text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded flex items-center gap-1">
-                                <CheckCircle size={10} /> Allowed by Teacher
-                              </span>
-                            ) : (
-                              <span className="text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded flex items-center gap-1">
-                                <ShieldAlert size={10} /> Locked
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      )}
+                  <div>
+                    <label className="block text-xs font-bold text-neutral-700 uppercase tracking-wider mb-1">Email</label>
+                    <input 
+                      type="email" required value={email} onChange={e => setEmail(e.target.value)}
+                      className="w-full glass-input py-2 px-3 text-sm text-black"
+                    />
+                  </div>
 
-                      {userData?.role === "TEACHER" && userData?.teacherProfile && (
-                        <div className="bg-black/30 p-4 rounded-2xl border border-white/5 space-y-2 text-sm text-gray-300">
-                          <div className="flex justify-between">
-                            <span className="text-gray-400 text-xs">Department</span>
-                            <span className="text-white font-bold">{userData.teacherProfile.department?.name || "N/A"}</span>
-                          </div>
-                        </div>
-                      )}
+                  <div>
+                    <label className="block text-xs font-bold text-neutral-700 uppercase tracking-wider mb-1">New Password (Optional)</label>
+                    <input 
+                      type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••"
+                      className="w-full glass-input py-2 px-3 text-sm text-black"
+                    />
+                  </div>
 
-                      {success && <p className="text-emerald-400 text-sm text-center font-medium bg-emerald-500/10 border border-emerald-500/20 p-2.5 rounded-xl">{success}</p>}
+                  <div className="flex gap-2.5 pt-3">
+                    <button 
+                      type="button" onClick={() => setIsEditing(false)}
+                      className="flex-1 py-2.5 rounded-xl border border-black/10 text-xs font-semibold text-neutral-600 hover:bg-black/[0.04] transition"
+                    >
+                      Cancel
+                    </button>
+                    <button 
+                      type="submit" disabled={updating}
+                      className="flex-1 py-2.5 btn-high-black rounded-xl text-xs font-bold transition"
+                    >
+                      {updating ? "Saving..." : "Save Changes"}
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <div className="space-y-2.5">
+                  <button 
+                    onClick={() => setIsEditing(true)}
+                    className="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-black/[0.03] hover:bg-black/[0.07] border border-black/10 rounded-xl text-xs font-bold text-black transition"
+                  >
+                    <Edit2 size={14} /> Edit Profile Details
+                  </button>
 
-                      {/* Action buttons */}
-                      <div className="flex gap-3 pt-4">
-                        <button 
-                          onClick={() => setIsEditing(true)}
-                          className="flex-1 bg-white/5 hover:bg-white/10 text-white font-bold py-3 rounded-xl border border-white/10 transition flex items-center justify-center gap-2"
-                        >
-                          <Edit2 size={16} /> Edit Profile
-                        </button>
-                        <button 
-                          onClick={handleLogout}
-                          className="px-4 bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold py-3 rounded-xl border border-red-500/20 transition flex items-center justify-center"
-                          title="Logout"
-                        >
-                          <LogOut size={16} />
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    /* Edit Form */
-                    <form onSubmit={handleUpdate} className="space-y-4">
-                      <div>
-                        <label className="block text-xs font-semibold text-gray-400 mb-1.5">First Name</label>
-                        <div className="relative">
-                          <User className="absolute left-3 top-3 text-gray-500" size={16} />
-                          <input 
-                            type="text" required
-                            value={firstName}
-                            onChange={e => setFirstName(e.target.value)}
-                            className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 pl-10 pr-4 text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                          />
-                        </div>
-                      </div>
-
-                      <div>
-                        <label className="block text-xs font-semibold text-gray-400 mb-1.5">Last Name</label>
-                        <div className="relative">
-                          <User className="absolute left-3 top-3 text-gray-500" size={16} />
-                          <input 
-                            type="text" required
-                            value={lastName}
-                            onChange={e => setLastName(e.target.value)}
-                            className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 pl-10 pr-4 text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                          />
-                        </div>
-                      </div>
-
-                      <div>
-                        <label className="block text-xs font-semibold text-gray-400 mb-1.5">Email Address</label>
-                        <div className="relative">
-                          <Mail className="absolute left-3 top-3 text-gray-500" size={16} />
-                          <input 
-                            type="email" required
-                            value={email}
-                            onChange={e => setEmail(e.target.value)}
-                            className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 pl-10 pr-4 text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                          />
-                        </div>
-                      </div>
-
-                      <div>
-                        <label className="block text-xs font-semibold text-gray-400 mb-1.5">New Password (leave blank to keep current)</label>
-                        <div className="relative">
-                          <Lock className="absolute left-3 top-3 text-gray-500" size={16} />
-                          <input 
-                            type="password"
-                            value={password}
-                            onChange={e => setPassword(e.target.value)}
-                            className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 pl-10 pr-4 text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                            placeholder="••••••••"
-                          />
-                        </div>
-                      </div>
-
-                      {error && <p className="text-red-400 text-sm text-center bg-red-500/10 border border-red-500/20 p-2.5 rounded-xl">{error}</p>}
-
-                      <div className="flex gap-3 pt-4 border-t border-white/5">
-                        <button 
-                          type="button"
-                          onClick={() => setIsEditing(false)}
-                          className="flex-1 bg-white/5 hover:bg-white/10 text-white font-bold py-2.5 rounded-xl border border-white/10 transition text-sm"
-                        >
-                          Cancel
-                        </button>
-                        <button 
-                          type="submit" disabled={updating}
-                          className="flex-1 bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 text-white font-bold py-2.5 rounded-xl transition text-sm flex items-center justify-center gap-1.5"
-                        >
-                          {updating ? "Saving..." : "Save Changes"}
-                        </button>
-                      </div>
-                    </form>
+                  {(userData?.role === "STUDENT" || userData?.role === "TEACHER") && (
+                    <button 
+                      onClick={() => setShowCamera(true)}
+                      className="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-black/[0.03] hover:bg-black/[0.07] border border-black/10 rounded-xl text-xs font-bold text-black transition"
+                    >
+                      <ScanFace size={14} /> Update Biometric Photo
+                    </button>
                   )}
+
+                  <button 
+                    onClick={handleLogout}
+                    className="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 rounded-xl text-xs font-bold transition mt-2"
+                  >
+                    <LogOut size={14} /> Sign Out
+                  </button>
                 </div>
               )}
             </motion.div>
-          </motion.div>
+          </div>
         )}
       </AnimatePresence>
 
+      {/* Face Capture Submodal */}
       {showCamera && (
         <CameraCapture 
-          title="Register / Update Your Face"
+          title="Update Face Biometric Photo"
           onCapture={handleFaceCapture}
           onCancel={() => setShowCamera(false)}
         />
