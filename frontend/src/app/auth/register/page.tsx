@@ -24,40 +24,94 @@ export default function RegisterPage() {
   const [showFaceScan, setShowFaceScan] = useState(false);
   const [registeredRole, setRegisteredRole] = useState("");
 
+  // OTP State
+  const [showOtpModal, setShowOtpModal] = useState(false);
+  const [otpCode, setOtpCode] = useState("");
+  const [otpError, setOtpError] = useState("");
+  const [otpLoading, setOtpLoading] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
+
+  // Send OTP
+  const triggerSendOtp = async (email: string) => {
+    try {
+      const res = await fetch(getApiUrl("/api/auth/send-otp"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, type: "REGISTRATION" }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to send verification code");
+      }
+      setResendCooldown(60);
+      return true;
+    } catch (err: any) {
+      setError(err.message || "Unable to send verification code");
+      return false;
+    }
+  };
+
+  // Trigger registration flow after form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
+    setOtpError("");
+
+    const sent = await triggerSendOtp(formData.email);
+    setIsLoading(false);
+    if (sent) {
+      setShowOtpModal(true);
+    }
+  };
+
+  // Verify OTP and complete registration
+  const handleVerifyAndRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (otpCode.length !== 6) {
+      setOtpError("Please enter a valid 6-digit code");
+      return;
+    }
+
+    setOtpLoading(true);
+    setOtpError("");
 
     try {
-      const res = await fetch(getApiUrl("/api/auth/register"), {
+      // 1. Verify OTP
+      const verifyRes = await fetch(getApiUrl("/api/auth/verify-otp"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: formData.email, otp: otpCode, type: "REGISTRATION" }),
+      });
+      const verifyData = await verifyRes.json();
+      if (!verifyRes.ok) {
+        throw new Error(verifyData.message || "Invalid or expired verification code");
+      }
+
+      // 2. Finalize registration
+      const regRes = await fetch(getApiUrl("/api/auth/register"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
-        credentials: "include"
+        credentials: "include",
       });
-      
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || data.error?.message || "Registration failed");
+      const regData = await regRes.json();
+      if (!regRes.ok) {
+        throw new Error(regData.message || "Registration failed");
       }
-      // Auto-transition to Face Scan instead of dashboard
+
+      setShowOtpModal(false);
+
       if (formData.role === "ADMIN") {
         router.push("/admin");
       } else {
         setRegisteredRole(formData.role);
         setShowFaceScan(true);
       }
-
     } catch (err: any) {
-      if (err.message === "Load failed" || err.message?.includes("fetch") || err.message?.includes("NetworkError")) {
-        setError("Cannot reach the backend server. Please make sure the backend API is deployed/running and NEXT_PUBLIC_API_URL is configured in your Vercel settings.");
-      } else {
-        setError(err.message || "Registration failed. Please check your details.");
-      }
+      setOtpError(err.message || "Verification failed");
     } finally {
-      setIsLoading(false);
+      setOtpLoading(false);
     }
   };
 
@@ -248,12 +302,10 @@ export default function RegisterPage() {
                 {isLoading ? (
                   <>
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    <span>Processing...</span>
+                    <span>Sending Code...</span>
                   </>
-                ) : formData.role === "ADMIN" ? (
-                  "Register Admin Account"
                 ) : (
-                  "Continue to Face Scan"
+                  "Continue to Email Verification"
                 )}
               </button>
             </form>
@@ -264,6 +316,87 @@ export default function RegisterPage() {
           </>
         )}
       </motion.div>
+
+      {/* OTP Verification Modal */}
+      {showOtpModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-md p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="w-full max-w-md mac-window p-8 rounded-3xl relative"
+          >
+            <div className="flex items-center justify-between pb-4 border-b border-black/[0.06] mb-5">
+              <div className="mac-dots">
+                <span className="mac-dot mac-dot-close" onClick={() => setShowOtpModal(false)} />
+                <span className="mac-dot mac-dot-min" />
+                <span className="mac-dot mac-dot-max" />
+              </div>
+              <span className="text-[10px] font-mono tracking-widest text-neutral-400 uppercase">Security Check</span>
+            </div>
+
+            <div className="text-center mb-6">
+              <div className="w-12 h-12 rounded-2xl bg-black/[0.04] border border-black/10 flex items-center justify-center mx-auto mb-3">
+                <Mail size={22} className="text-black" />
+              </div>
+              <h3 className="text-xl font-bold text-black tracking-tight">Verify Your Email</h3>
+              <p className="text-xs text-neutral-500 mt-1">
+                We sent a 6-digit code to <span className="font-semibold text-black">{formData.email}</span>
+              </p>
+            </div>
+
+            {otpError && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-xs text-center">
+                {otpError}
+              </div>
+            )}
+
+            <form onSubmit={handleVerifyAndRegister} className="space-y-5">
+              <div>
+                <label className="block text-xs font-bold text-center text-neutral-600 uppercase tracking-wider mb-2">
+                  Enter 6-Digit OTP Code
+                </label>
+                <input
+                  type="text"
+                  maxLength={6}
+                  value={otpCode}
+                  autoFocus
+                  onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ""))}
+                  placeholder="••••••"
+                  className="w-full text-center text-3xl font-mono tracking-[10px] py-3.5 bg-black/[0.03] border border-black/10 rounded-2xl text-black focus:outline-none focus:bg-white focus:border-[#0071E3] focus:ring-2 focus:ring-[#0071E3]/20"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={otpLoading || otpCode.length !== 6}
+                className="w-full btn-high-black disabled:opacity-50 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2"
+              >
+                {otpLoading ? "Verifying..." : "Verify & Complete Registration"}
+              </button>
+
+              <div className="flex items-center justify-between text-xs pt-1">
+                <button
+                  type="button"
+                  onClick={() => setShowOtpModal(false)}
+                  className="text-neutral-500 hover:text-black transition"
+                >
+                  Edit details
+                </button>
+                <button
+                  type="button"
+                  disabled={resendCooldown > 0}
+                  onClick={async () => {
+                    await triggerSendOtp(formData.email);
+                  }}
+                  className="text-black font-semibold hover:underline disabled:text-neutral-400 disabled:no-underline"
+                >
+                  {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : "Resend Code"}
+                </button>
+              </div>
+            </form>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }

@@ -146,6 +146,17 @@ model QRRegistration {
   timetable   Timetable      @relation(fields: [timetableId], references: [id])
 }
 
+model OtpVerification {
+  id        String   @id @default(uuid())
+  email     String
+  otp       String
+  type      OtpType  @default(REGISTRATION)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([email, type])
+}
+
 enum Role {
   ADMIN
   TEACHER
@@ -158,3 +169,10 @@ enum AttendanceStatus {
   CANCELLED
   HOLIDAY
 }
+
+enum OtpType {
+  REGISTRATION
+  PASSWORD_RESET
+  LOGIN_2FA
+}
+

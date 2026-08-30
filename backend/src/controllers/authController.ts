@@ -2,8 +2,11 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import { prisma } from '../index';
 import { generateToken } from '../utils/jwt';
+import { saveOtp, verifyOtp } from '../utils/otp';
+import { sendOtpEmail } from '../utils/mailer';
 import axios from 'axios';
 import FormData from 'form-data';
+
 
 export const register = async (req: Request, res: Response) => {
   try {
@@ -275,4 +278,79 @@ export const updateProfile = async (req: Request, res: Response) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const sendOtpController = async (req: Request, res: Response) => {
+  try {
+    const { email, type = 'REGISTRATION' } = req.body;
+    if (!email) {
+      return res.status(400).json({ message: 'Email address is required' });
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // Check user existence according to purpose
+    const existingUser = await prisma.user.findUnique({ where: { email: normalizedEmail } });
+    if (type === 'REGISTRATION' && existingUser) {
+      return res.status(400).json({ message: 'An account with this email already exists' });
+    }
+    if (type === 'PASSWORD_RESET' && !existingUser) {
+      return res.status(404).json({ message: 'No account found with this email address' });
+    }
+
+    const otp = await saveOtp(normalizedEmail, type as any, 10);
+    await sendOtpEmail(normalizedEmail, otp, type as any);
+
+    res.json({ success: true, message: `Verification code sent to ${normalizedEmail}` });
+  } catch (error: any) {
+    console.error('Error in sendOtpController:', error);
+    res.status(500).json({ message: error.message || 'Failed to send verification code' });
+  }
+};
+
+export const verifyOtpController = async (req: Request, res: Response) => {
+  try {
+    const { email, otp, type = 'REGISTRATION' } = req.body;
+    if (!email || !otp) {
+      return res.status(400).json({ message: 'Email and OTP code are required' });
+    }
+
+    const isValid = await verifyOtp(email, otp, type as any);
+    if (!isValid) {
+      return res.status(400).json({ message: 'Invalid or expired verification code. Please request a new one.' });
+    }
+
+    res.json({ success: true, message: 'Verification successful' });
+  } catch (error: any) {
+    console.error('Error in verifyOtpController:', error);
+    res.status(500).json({ message: error.message || 'Failed to verify code' });
+  }
+};
+
+export const resetPassword = async (req: Request, res: Response) => {
+  try {
+    const { email, otp, newPassword } = req.body;
+    if (!email || !otp || !newPassword) {
+      return res.status(400).json({ message: 'Email, OTP, and new password are required' });
+    }
+
+    const isValid = await verifyOtp(email, otp, 'PASSWORD_RESET' as any);
+    if (!isValid) {
+      return res.status(400).json({ message: 'Invalid or expired verification code' });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const passwordHash = await bcrypt.hash(newPassword, salt);
+
+    await prisma.user.update({
+      where: { email: email.toLowerCase().trim() },
+      data: { passwordHash },
+    });
+
+    res.json({ success: true, message: 'Password reset successfully. You can now log in.' });
+  } catch (error: any) {
+    console.error('Error in resetPassword:', error);
+    res.status(500).json({ message: error.message || 'Failed to reset password' });
+  }
+};
+
 
