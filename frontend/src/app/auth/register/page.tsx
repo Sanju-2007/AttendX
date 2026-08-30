@@ -51,7 +51,11 @@ export default function RegisterPage() {
       }
 
     } catch (err: any) {
-      setError(err.message);
+      if (err.message === "Load failed" || err.message?.includes("fetch") || err.message?.includes("NetworkError")) {
+        setError("Cannot reach the backend server. Please make sure the backend API is deployed/running and NEXT_PUBLIC_API_URL is configured in your Vercel settings.");
+      } else {
+        setError(err.message || "Registration failed. Please check your details.");
+      }
     } finally {
       setIsLoading(false);
     }

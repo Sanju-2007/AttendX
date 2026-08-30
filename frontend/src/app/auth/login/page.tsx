@@ -43,7 +43,11 @@ export default function LoginPage() {
         throw new Error("Unauthorized user role classification");
       }
     } catch (err: any) {
-      setError(err.message || "Connection refused. Please check if backend service is running.");
+      if (err.message === "Load failed" || err.message?.includes("fetch") || err.message?.includes("NetworkError")) {
+        setError("Cannot reach the backend server. Please make sure the backend API is running and NEXT_PUBLIC_API_URL is configured in your Vercel settings.");
+      } else {
+        setError(err.message || "Invalid email or password");
+      }
     } finally {
       setIsLoading(false);
     }
