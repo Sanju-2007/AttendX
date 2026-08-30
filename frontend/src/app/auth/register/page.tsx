@@ -58,30 +58,40 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#060913] p-4 relative overflow-hidden">
-      {/* Water Droplet Ambient Glows */}
-      <div className="absolute -top-32 -left-32 w-96 h-96 bg-sky-500/15 rounded-full blur-3xl pointer-events-none animate-water-pulse" />
-      <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-blue-600/15 rounded-full blur-3xl pointer-events-none animate-water-pulse" style={{ animationDelay: '3s' }} />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
+    <div className="min-h-screen flex items-center justify-center bg-[#FFFFFF] p-4 relative overflow-hidden">
+      {/* Subtle macOS Liquid Ambient Light */}
+      <div className="absolute -top-32 left-1/4 w-[600px] h-[600px] bg-sky-100/50 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute -bottom-32 right-1/4 w-[600px] h-[600px] bg-slate-100/60 rounded-full blur-[140px] pointer-events-none" />
 
       <motion.div 
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-        className="w-full max-w-lg p-8 sm:p-10 water-pane relative z-10"
+        transition={{ duration: 0.4, ease: "easeOut" }}
+        className="w-full max-w-lg p-8 sm:p-9 mac-window relative z-10"
       >
-        <div className="text-center mb-8">
-          {/* Water droplet icon badge */}
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-b from-sky-500/20 to-blue-600/10 border border-sky-400/30 flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_rgba(56,189,248,0.25)]">
-            <UserPlus size={30} className="text-sky-400" />
+        {/* Mac Window Header Dots */}
+        <div className="flex items-center justify-between pb-5 border-b border-black/[0.06] mb-6">
+          <div className="mac-dots">
+            <span className="mac-dot mac-dot-close" />
+            <span className="mac-dot mac-dot-min" />
+            <span className="mac-dot mac-dot-max" />
           </div>
-          <h2 className="text-3xl font-bold text-white tracking-tight mb-2">Create Account</h2>
-          <p className="text-slate-400 text-sm">Join the smart attendance portal</p>
+          <div className="text-[11px] font-semibold uppercase tracking-widest text-neutral-400">
+            Create Account
+          </div>
+        </div>
+
+        <div className="text-center mb-7">
+          <div className="w-13 h-13 rounded-2xl bg-black/[0.04] border border-black/[0.08] flex items-center justify-center mx-auto mb-3 shadow-sm">
+            <UserPlus size={26} className="text-black" />
+          </div>
+          <h2 className="text-2xl font-black text-black tracking-tight mb-1">Create Account</h2>
+          <p className="text-neutral-500 text-xs">Join the smart attendance portal</p>
         </div>
 
         {showFaceScan ? (
           <div className="w-full">
-            <p className="text-xs text-sky-300/80 text-center mb-4 bg-sky-950/40 border border-sky-500/20 p-3 rounded-xl">
+            <p className="text-xs text-neutral-600 text-center mb-4 bg-black/[0.03] border border-black/[0.08] p-3 rounded-xl">
               💡 <strong>No Webcam?</strong> You can switch to the <strong>Upload Photo</strong> tab inside the box to upload a picture from your device instead.
             </p>
             <CameraCapture 
@@ -131,83 +141,83 @@ export default function RegisterPage() {
         ) : (
           <>
             {error && (
-              <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm text-center">
+              <div className="mb-5 p-3.5 bg-red-50 border border-red-200 rounded-xl text-red-600 text-xs text-center">
                 {error}
               </div>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3.5">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">First Name</label>
+                  <label className="block text-xs font-bold text-neutral-700 uppercase tracking-wider mb-1.5">First Name</label>
                   <div className="relative">
-                    <User className="absolute left-3.5 top-3 text-slate-400" size={16} />
+                    <User className="absolute left-3 top-2.5 text-neutral-400" size={15} />
                     <input 
                       type="text" required
                       onChange={e => setFormData({...formData, firstName: e.target.value})}
-                      className="w-full bg-[#070B16] border border-white/10 rounded-xl py-2.5 pl-10 pr-3.5 text-white text-sm focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all placeholder:text-slate-600"
+                      className="w-full bg-black/[0.03] border border-black/10 rounded-xl py-2.5 pl-9 pr-3 text-black text-sm focus:outline-none focus:bg-white focus:border-[#0071E3] focus:ring-2 focus:ring-[#0071E3]/20 transition-all placeholder:text-neutral-400"
                       placeholder="John"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Last Name</label>
+                  <label className="block text-xs font-bold text-neutral-700 uppercase tracking-wider mb-1.5">Last Name</label>
                   <input 
                     type="text" required
                     onChange={e => setFormData({...formData, lastName: e.target.value})}
-                    className="w-full bg-[#070B16] border border-white/10 rounded-xl py-2.5 px-3.5 text-white text-sm focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all placeholder:text-slate-600"
+                    className="w-full bg-black/[0.03] border border-black/10 rounded-xl py-2.5 px-3 text-black text-sm focus:outline-none focus:bg-white focus:border-[#0071E3] focus:ring-2 focus:ring-[#0071E3]/20 transition-all placeholder:text-neutral-400"
                     placeholder="Doe"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Email Address</label>
+                <label className="block text-xs font-bold text-neutral-700 uppercase tracking-wider mb-1.5">Email Address</label>
                 <div className="relative">
-                  <Mail className="absolute left-3.5 top-3 text-slate-400" size={16} />
+                  <Mail className="absolute left-3 top-2.5 text-neutral-400" size={15} />
                   <input 
                     type="email" required
                     onChange={e => setFormData({...formData, email: e.target.value})}
-                    className="w-full bg-[#070B16] border border-white/10 rounded-xl py-2.5 pl-10 pr-3.5 text-white text-sm focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all placeholder:text-slate-600"
-                    placeholder="john@university.edu"
+                    className="w-full bg-black/[0.03] border border-black/10 rounded-xl py-2.5 pl-9 pr-3 text-black text-sm focus:outline-none focus:bg-white focus:border-[#0071E3] focus:ring-2 focus:ring-[#0071E3]/20 transition-all placeholder:text-neutral-400"
+                    placeholder="name@university.edu"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Password</label>
+                <label className="block text-xs font-bold text-neutral-700 uppercase tracking-wider mb-1.5">Password</label>
                 <div className="relative">
-                  <Lock className="absolute left-3.5 top-3 text-slate-400" size={16} />
+                  <Lock className="absolute left-3 top-2.5 text-neutral-400" size={15} />
                   <input 
                     type="password" required
                     onChange={e => setFormData({...formData, password: e.target.value})}
-                    className="w-full bg-[#070B16] border border-white/10 rounded-xl py-2.5 pl-10 pr-3.5 text-white text-sm focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all placeholder:text-slate-600"
+                    className="w-full bg-black/[0.03] border border-black/10 rounded-xl py-2.5 pl-9 pr-3 text-black text-sm focus:outline-none focus:bg-white focus:border-[#0071E3] focus:ring-2 focus:ring-[#0071E3]/20 transition-all placeholder:text-neutral-400"
                     placeholder="••••••••"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Role</label>
+                <label className="block text-xs font-bold text-neutral-700 uppercase tracking-wider mb-1.5">Role</label>
                 <select 
                   value={formData.role}
                   onChange={e => setFormData({...formData, role: e.target.value, inviteToken: ""})}
-                  className="w-full bg-[#070B16] border border-white/10 rounded-xl py-2.5 px-3.5 text-white text-sm focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all cursor-pointer"
+                  className="w-full bg-black/[0.03] border border-black/10 rounded-xl py-2.5 px-3 text-black text-sm focus:outline-none focus:bg-white focus:border-[#0071E3] focus:ring-2 focus:ring-[#0071E3]/20 transition-all cursor-pointer"
                 >
-                  <option value="STUDENT" className="bg-[#0A0F1D] text-white">Student</option>
-                  <option value="TEACHER" className="bg-[#0A0F1D] text-white">Teacher</option>
-                  <option value="ADMIN" className="bg-[#0A0F1D] text-white">Administrator</option>
+                  <option value="STUDENT">Student</option>
+                  <option value="TEACHER">Teacher</option>
+                  <option value="ADMIN">Administrator</option>
                 </select>
               </div>
 
               {formData.role === "TEACHER" && (
                 <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="overflow-hidden">
-                  <label className="block text-xs font-semibold text-sky-400 uppercase tracking-wider mb-1.5">Admin Invite Token (Required for Teachers)</label>
+                  <label className="block text-xs font-bold text-black uppercase tracking-wider mb-1.5">Admin Invite Token (Required for Teachers)</label>
                   <input 
                     type="text" required
                     value={formData.inviteToken}
                     onChange={e => setFormData({...formData, inviteToken: e.target.value})}
-                    className="w-full bg-sky-950/20 border border-sky-500/30 rounded-xl py-2.5 px-3.5 text-white text-sm focus:outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-500/30"
+                    className="w-full bg-black/[0.03] border border-black/10 rounded-xl py-2.5 px-3 text-black text-sm focus:outline-none focus:bg-white focus:border-[#0071E3] focus:ring-2 focus:ring-[#0071E3]/20"
                     placeholder="Enter 32-character token"
                   />
                 </motion.div>
@@ -215,12 +225,12 @@ export default function RegisterPage() {
 
               {formData.role === "STUDENT" && (
                 <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="overflow-hidden">
-                  <label className="block text-xs font-semibold text-sky-400 uppercase tracking-wider mb-1.5">University Roll Number</label>
+                  <label className="block text-xs font-bold text-black uppercase tracking-wider mb-1.5">University Roll Number</label>
                   <input 
                     type="text" required
                     value={formData.rollNumber}
                     onChange={e => setFormData({...formData, rollNumber: e.target.value})}
-                    className="w-full bg-sky-950/20 border border-sky-500/30 rounded-xl py-2.5 px-3.5 text-white text-sm focus:outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-500/30"
+                    className="w-full bg-black/[0.03] border border-black/10 rounded-xl py-2.5 px-3 text-black text-sm focus:outline-none focus:bg-white focus:border-[#0071E3] focus:ring-2 focus:ring-[#0071E3]/20"
                     placeholder="e.g. CS21B1042"
                   />
                 </motion.div>
@@ -229,7 +239,7 @@ export default function RegisterPage() {
               <button 
                 type="submit" 
                 disabled={isLoading}
-                className="w-full btn-water disabled:opacity-50 font-semibold py-3 px-4 rounded-xl mt-6 flex items-center justify-center gap-2"
+                className="w-full btn-high-black disabled:opacity-50 font-bold py-3 px-4 rounded-xl mt-4 flex items-center justify-center gap-2 text-sm"
               >
                 {isLoading ? (
                   <>
@@ -244,8 +254,8 @@ export default function RegisterPage() {
               </button>
             </form>
 
-            <p className="mt-6 text-center text-slate-400 text-sm">
-              Already have an account? <Link href="/auth/login" className="text-sky-400 hover:text-sky-300 font-medium transition-colors">Log in here</Link>
+            <p className="mt-5 text-center text-neutral-500 text-xs">
+              Already have an account? <Link href="/auth/login" className="text-black font-bold hover:underline transition-colors">Log in here</Link>
             </p>
           </>
         )}
