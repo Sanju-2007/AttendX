@@ -58,23 +58,30 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-dark p-4">
+    <div className="min-h-screen flex items-center justify-center bg-[#060913] p-4 relative overflow-hidden">
+      {/* Water Droplet Ambient Glows */}
+      <div className="absolute -top-32 -left-32 w-96 h-96 bg-sky-500/15 rounded-full blur-3xl pointer-events-none animate-water-pulse" />
+      <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-blue-600/15 rounded-full blur-3xl pointer-events-none animate-water-pulse" style={{ animationDelay: '3s' }} />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
+
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-lg p-8 glass-dark rounded-2xl border border-white/10 shadow-2xl"
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="w-full max-w-lg p-8 sm:p-10 water-pane relative z-10"
       >
         <div className="text-center mb-8">
-          <div className="bg-secondary/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 border border-secondary/50">
-            <UserPlus size={32} className="text-secondary" />
+          {/* Water droplet icon badge */}
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-b from-sky-500/20 to-blue-600/10 border border-sky-400/30 flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_rgba(56,189,248,0.25)]">
+            <UserPlus size={30} className="text-sky-400" />
           </div>
-          <h2 className="text-3xl font-bold text-white mb-2">Create Account</h2>
-          <p className="text-gray-400">Join the smart attendance system</p>
+          <h2 className="text-3xl font-bold text-white tracking-tight mb-2">Create Account</h2>
+          <p className="text-slate-400 text-sm">Join the smart attendance portal</p>
         </div>
 
         {showFaceScan ? (
           <div className="w-full">
-            <p className="text-xs text-gray-400 text-center mb-4 bg-white/5 border border-white/5 p-3 rounded-xl">
+            <p className="text-xs text-sky-300/80 text-center mb-4 bg-sky-950/40 border border-sky-500/20 p-3 rounded-xl">
               💡 <strong>No Webcam?</strong> You can switch to the <strong>Upload Photo</strong> tab inside the box to upload a picture from your device instead.
             </p>
             <CameraCapture 
@@ -124,112 +131,121 @@ export default function RegisterPage() {
         ) : (
           <>
             {error && (
-              <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm text-center">
+              <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm text-center">
                 {error}
               </div>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">First Name</label>
-              <div className="relative">
-                <User className="absolute left-3 top-3 text-gray-500" size={18} />
-                <input 
-                  type="text" required
-                  onChange={e => setFormData({...formData, firstName: e.target.value})}
-                  className="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 pl-10 pr-4 text-white text-sm focus:ring-2 focus:ring-secondary"
-                  placeholder="John"
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">First Name</label>
+                  <div className="relative">
+                    <User className="absolute left-3.5 top-3 text-slate-400" size={16} />
+                    <input 
+                      type="text" required
+                      onChange={e => setFormData({...formData, firstName: e.target.value})}
+                      className="w-full bg-[#070B16] border border-white/10 rounded-xl py-2.5 pl-10 pr-3.5 text-white text-sm focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all placeholder:text-slate-600"
+                      placeholder="John"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Last Name</label>
+                  <input 
+                    type="text" required
+                    onChange={e => setFormData({...formData, lastName: e.target.value})}
+                    className="w-full bg-[#070B16] border border-white/10 rounded-xl py-2.5 px-3.5 text-white text-sm focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all placeholder:text-slate-600"
+                    placeholder="Doe"
+                  />
+                </div>
               </div>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Last Name</label>
-              <input 
-                  type="text" required
-                  onChange={e => setFormData({...formData, lastName: e.target.value})}
-                  className="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 px-4 text-white text-sm focus:ring-2 focus:ring-secondary"
-                  placeholder="Doe"
-                />
-            </div>
-          </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">Email Address</label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-3 text-gray-500" size={18} />
-              <input 
-                type="email" required
-                onChange={e => setFormData({...formData, email: e.target.value})}
-                className="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 pl-10 pr-4 text-white text-sm focus:ring-2 focus:ring-secondary"
-                placeholder="john@university.edu"
-              />
-            </div>
-          </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Email Address</label>
+                <div className="relative">
+                  <Mail className="absolute left-3.5 top-3 text-slate-400" size={16} />
+                  <input 
+                    type="email" required
+                    onChange={e => setFormData({...formData, email: e.target.value})}
+                    className="w-full bg-[#070B16] border border-white/10 rounded-xl py-2.5 pl-10 pr-3.5 text-white text-sm focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all placeholder:text-slate-600"
+                    placeholder="john@university.edu"
+                  />
+                </div>
+              </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">Password</label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-3 text-gray-500" size={18} />
-              <input 
-                type="password" required
-                onChange={e => setFormData({...formData, password: e.target.value})}
-                className="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 pl-10 pr-4 text-white text-sm focus:ring-2 focus:ring-secondary"
-                placeholder="••••••••"
-              />
-            </div>
-          </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Password</label>
+                <div className="relative">
+                  <Lock className="absolute left-3.5 top-3 text-slate-400" size={16} />
+                  <input 
+                    type="password" required
+                    onChange={e => setFormData({...formData, password: e.target.value})}
+                    className="w-full bg-[#070B16] border border-white/10 rounded-xl py-2.5 pl-10 pr-3.5 text-white text-sm focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all placeholder:text-slate-600"
+                    placeholder="••••••••"
+                  />
+                </div>
+              </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1">Role</label>
-            <select 
-              value={formData.role}
-              onChange={e => setFormData({...formData, role: e.target.value, inviteToken: ""})}
-              className="w-full bg-white/5 border border-white/10 rounded-lg py-2.5 px-4 text-white text-sm focus:ring-2 focus:ring-secondary appearance-none"
-            >
-              <option value="STUDENT" className="text-black">Student</option>
-              <option value="TEACHER" className="text-black">Teacher</option>
-              <option value="ADMIN" className="text-black">Administrator</option>
-            </select>
-          </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Role</label>
+                <select 
+                  value={formData.role}
+                  onChange={e => setFormData({...formData, role: e.target.value, inviteToken: ""})}
+                  className="w-full bg-[#070B16] border border-white/10 rounded-xl py-2.5 px-3.5 text-white text-sm focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all cursor-pointer"
+                >
+                  <option value="STUDENT" className="bg-[#0A0F1D] text-white">Student</option>
+                  <option value="TEACHER" className="bg-[#0A0F1D] text-white">Teacher</option>
+                  <option value="ADMIN" className="bg-[#0A0F1D] text-white">Administrator</option>
+                </select>
+              </div>
 
-          {formData.role === "TEACHER" && (
-            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="overflow-hidden">
-              <label className="block text-sm font-medium text-pink-400 mb-1">Admin Invite Token (Required for Teachers)</label>
-              <input 
-                type="text" required
-                value={formData.inviteToken}
-                onChange={e => setFormData({...formData, inviteToken: e.target.value})}
-                className="w-full bg-pink-500/10 border border-pink-500/30 rounded-lg py-2.5 px-4 text-white text-sm focus:ring-2 focus:ring-pink-500"
-                placeholder="Enter 32-character token"
-              />
-            </motion.div>
-          )}
+              {formData.role === "TEACHER" && (
+                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="overflow-hidden">
+                  <label className="block text-xs font-semibold text-sky-400 uppercase tracking-wider mb-1.5">Admin Invite Token (Required for Teachers)</label>
+                  <input 
+                    type="text" required
+                    value={formData.inviteToken}
+                    onChange={e => setFormData({...formData, inviteToken: e.target.value})}
+                    className="w-full bg-sky-950/20 border border-sky-500/30 rounded-xl py-2.5 px-3.5 text-white text-sm focus:outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-500/30"
+                    placeholder="Enter 32-character token"
+                  />
+                </motion.div>
+              )}
 
-          {formData.role === "STUDENT" && (
-            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="overflow-hidden">
-              <label className="block text-sm font-medium text-emerald-400 mb-1">University Roll Number</label>
-              <input 
-                type="text" required
-                value={formData.rollNumber}
-                onChange={e => setFormData({...formData, rollNumber: e.target.value})}
-                className="w-full bg-emerald-500/10 border border-emerald-500/30 rounded-lg py-2.5 px-4 text-white text-sm focus:ring-2 focus:ring-emerald-500"
-                placeholder="e.g. CS21B1042"
-              />
-            </motion.div>
-          )}
+              {formData.role === "STUDENT" && (
+                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="overflow-hidden">
+                  <label className="block text-xs font-semibold text-sky-400 uppercase tracking-wider mb-1.5">University Roll Number</label>
+                  <input 
+                    type="text" required
+                    value={formData.rollNumber}
+                    onChange={e => setFormData({...formData, rollNumber: e.target.value})}
+                    className="w-full bg-sky-950/20 border border-sky-500/30 rounded-xl py-2.5 px-3.5 text-white text-sm focus:outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-500/30"
+                    placeholder="e.g. CS21B1042"
+                  />
+                </motion.div>
+              )}
 
-          <button 
-            type="submit" 
-            disabled={isLoading}
-            className="w-full bg-secondary hover:bg-violet-600 disabled:opacity-50 text-white font-bold py-3 px-4 rounded-lg transition-colors mt-6"
-          >
-            {isLoading ? "Creating Account..." : formData.role === "ADMIN" ? "Register Admin Account" : "Continue to Face Scan"}
-          </button>
-        </form>
+              <button 
+                type="submit" 
+                disabled={isLoading}
+                className="w-full btn-water disabled:opacity-50 font-semibold py-3 px-4 rounded-xl mt-6 flex items-center justify-center gap-2"
+              >
+                {isLoading ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <span>Processing...</span>
+                  </>
+                ) : formData.role === "ADMIN" ? (
+                  "Register Admin Account"
+                ) : (
+                  "Continue to Face Scan"
+                )}
+              </button>
+            </form>
 
-            <p className="mt-6 text-center text-gray-400 text-sm">
-              Already have an account? <Link href="/auth/login" className="text-secondary hover:text-purple-400 font-medium">Log in here</Link>
+            <p className="mt-6 text-center text-slate-400 text-sm">
+              Already have an account? <Link href="/auth/login" className="text-sky-400 hover:text-sky-300 font-medium transition-colors">Log in here</Link>
             </p>
           </>
         )}

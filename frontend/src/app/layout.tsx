@@ -15,12 +15,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${inter.className} bg-light dark:bg-dark text-dark dark:text-light transition-colors duration-300`}>
-        <main className="min-h-screen">
+    <html lang="en" className="dark">
+      <body className={`${inter.className} bg-[#060913] text-white min-h-screen antialiased selection:bg-sky-500/30 selection:text-sky-200`}>
+        <main className="min-h-screen relative overflow-x-hidden">
           {children}
         </main>
       </body>
     </html>
   );
 }
+

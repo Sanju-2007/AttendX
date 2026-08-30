@@ -50,22 +50,23 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-dark p-4 relative overflow-hidden">
-      {/* Visual background accents to match dark-glass aesthetic */}
-      <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-secondary/10 rounded-full blur-[120px] pointer-events-none" />
+    <div className="min-h-screen flex items-center justify-center bg-[#060913] p-4 relative overflow-hidden">
+      {/* Water Droplet Ambient Glows */}
+      <div className="absolute -top-32 -left-32 w-96 h-96 bg-sky-500/15 rounded-full blur-3xl pointer-events-none animate-water-pulse" />
+      <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-blue-600/15 rounded-full blur-3xl pointer-events-none animate-water-pulse" style={{ animationDelay: '3s' }} />
 
       <motion.div 
-        initial={{ opacity: 0, scale: 0.95 }}
+        initial={{ opacity: 0, scale: 0.96 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-md p-8 glass-dark rounded-2xl border border-white/10 shadow-2xl relative z-10"
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="w-full max-w-md p-8 sm:p-10 water-pane relative z-10"
       >
         <div className="text-center mb-8">
-          <div className="bg-primary/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 border border-primary/50">
-            <LogIn size={32} className="text-primary-light" />
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-b from-sky-500/20 to-blue-600/10 border border-sky-400/30 flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_rgba(56,189,248,0.25)]">
+            <LogIn size={30} className="text-sky-400" />
           </div>
-          <h2 className="text-3xl font-bold text-white mb-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">Welcome Back</h2>
-          <p className="text-gray-400">Sign in to your Attendify portal</p>
+          <h2 className="text-3xl font-bold text-white tracking-tight mb-2">Welcome Back</h2>
+          <p className="text-slate-400 text-sm">Sign in to your Attendify portal</p>
         </div>
 
         {error && (
@@ -74,22 +75,22 @@ export default function LoginPage() {
             animate={{ opacity: 1, y: 0 }}
             className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl flex items-center gap-3 text-red-400 text-sm"
           >
-            <AlertCircle size={20} className="shrink-0" />
+            <AlertCircle size={18} className="shrink-0" />
             <span>{error}</span>
           </motion.div>
         )}
 
-        <form onSubmit={handleLogin} className="space-y-6">
+        <form onSubmit={handleLogin} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Email Address</label>
+            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Email Address</label>
             <div className="relative">
-              <Mail className="absolute left-3 top-3.5 text-gray-500" size={20} />
+              <Mail className="absolute left-3.5 top-3.5 text-slate-400" size={18} />
               <input 
                 type="email" 
                 required
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-lg py-3 pl-10 pr-4 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+                className="w-full bg-[#070B16] border border-white/10 rounded-xl py-3 pl-11 pr-4 text-white text-sm focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all placeholder:text-slate-600"
                 placeholder="Enter your email"
                 disabled={isLoading}
               />
@@ -97,15 +98,15 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Password</label>
+            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Password</label>
             <div className="relative">
-              <Lock className="absolute left-3 top-3.5 text-gray-500" size={20} />
+              <Lock className="absolute left-3.5 top-3.5 text-slate-400" size={18} />
               <input 
                 type="password" 
                 required
                 value={password}
                 onChange={e => setPassword(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-lg py-3 pl-10 pr-4 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+                className="w-full bg-[#070B16] border border-white/10 rounded-xl py-3 pl-11 pr-4 text-white text-sm focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all placeholder:text-slate-600"
                 placeholder="••••••••"
                 disabled={isLoading}
               />
@@ -115,12 +116,12 @@ export default function LoginPage() {
           <button 
             type="submit" 
             disabled={isLoading}
-            className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 disabled:opacity-50 text-white font-bold py-3 px-4 rounded-lg transition-all shadow-lg flex items-center justify-center gap-2"
+            className="w-full btn-water disabled:opacity-50 font-semibold py-3.5 px-4 rounded-xl transition-all flex items-center justify-center gap-2 mt-2"
           >
             {isLoading ? (
               <>
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                Signing In...
+                <span>Signing In...</span>
               </>
             ) : (
               "Sign In"
@@ -128,8 +129,8 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <p className="mt-6 text-center text-gray-400 text-sm">
-          Don't have an account? <Link href="/auth/register" className="text-primary-light hover:text-blue-400 font-medium transition-colors">Register here</Link>
+        <p className="mt-6 text-center text-slate-400 text-sm">
+          Don't have an account? <Link href="/auth/register" className="text-sky-400 hover:text-sky-300 font-medium transition-colors">Register here</Link>
         </p>
       </motion.div>
     </div>
